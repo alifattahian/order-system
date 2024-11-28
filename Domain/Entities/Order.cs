@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Constants;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.ValueObjects;
 
@@ -11,11 +12,11 @@ namespace Domain.Entities
         {
             if (orderDto.customer == null)
             {
-                throw new DomainValidationException("customer is not set!");
+                throw new DomainValidationException(ErrorCodes.CustomerNotEmpty);
             }
             if (orderDto.items == null || !orderDto.items.Any())
             {
-                throw new DomainValidationException("no item is added to order!");
+                throw new DomainValidationException(ErrorCodes.NoItemIsAddedToOrder);
             }
             Customer = orderDto.customer;
             Address = orderDto.address;
