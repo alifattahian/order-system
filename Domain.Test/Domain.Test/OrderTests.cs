@@ -70,9 +70,31 @@ namespace Domain.Test
                         (product: product2,quantity:10)
                        }
                    ));
-            }, "should throw DomainValidationException when customer is not set!");
+            }, "should throw an Exception when customer is not set!");
 
             Assert.AreEqual("customer is not set!", exception.Message);
+        }
+
+        [Test]
+        public void Order_Should_Have_Atleast_one_Item()
+        {
+            var product1 = Products.Where(x => x.Code == "AB-X1").FirstOrDefault();
+            var product2 = Products.Where(x => x.Code == "SC-91").FirstOrDefault();
+
+            var address = new Address("Tehran", "123456789", "my address location description");
+            Order order = null;
+            var exception = Assert.Throws<DomainValidationException>(() =>
+            {
+                order = new Order((
+                   customer: new Customer(),
+                   address: address,
+                   items: new (IProduct product, int quantity)[]{
+
+                       }
+                   ));
+            }, "should throw an Exception when no item is added to order!");
+
+            Assert.AreEqual("no item is added to order!", exception.Message);
         }
     }
 }

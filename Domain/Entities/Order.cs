@@ -13,6 +13,10 @@ namespace Domain.Entities
             {
                 throw new DomainValidationException("customer is not set!");
             }
+            if (orderDto.items == null || !orderDto.items.Any())
+            {
+                throw new DomainValidationException("no item is added to order!");
+            }
             Customer = orderDto.customer;
             Address = orderDto.address;
             Items = new List<OrderItem>();
