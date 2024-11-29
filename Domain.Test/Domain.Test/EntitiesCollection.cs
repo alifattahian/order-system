@@ -3,7 +3,7 @@ using Moq;
 
 namespace Domain.Test
 {
-    internal static class EntitiesCollection
+    public static class EntitiesCollection
     {
         public static List<Product> Products { get; set; }
         public static Product Product1 => Products.Where(x => x.Code == "AB-X1").FirstOrDefault();

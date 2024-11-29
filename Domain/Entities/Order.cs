@@ -26,12 +26,15 @@ namespace Domain.Entities
                 Items.Add(new OrderItem((order: this, product: item.product, quantity: item.quantity)));
             }
             TotalAmount = Items.Sum(item => item.TotalAmount);
+            CalculateNetPrice();
 
         }
 
         public int Id { get; private set; }
         public ICustomer Customer { get; private set; }
         public Address Address { get; private set; }
+
+        public DateTime CreateDateTime { init; get; }
 
         public List<OrderItem> Items { get; private set; }
 
