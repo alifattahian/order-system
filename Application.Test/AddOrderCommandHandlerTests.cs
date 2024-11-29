@@ -1,30 +1,43 @@
 ﻿using Application.Commands;
-using Domain;
-using Domain.Entities;
+using Application.Dto;
 using Domain.Interfaces;
 using Domain.Test;
-using Domain.ValueObjects;
 using Moq;
 
 namespace Application.Test
 {
     public class AddOrderCommandHandlerTests
     {
-        protected Address Address => new Address("Tehran", "123456789", "my address location description");
-        protected Customer Customer { set; get; }
+        protected AddressDto Address => new AddressDto("Tehran", "123456789", "my address location description");
+
         private Mock<ITimeService> _timeServiceMock;
+        private Mock<IProductRepository> productRepositoryMock;
+        private Mock<ICustomerRepository> customerRepositoryMock;
         [SetUp]
         public void Setup()
         {
 
-            Customer = new Customer((name: "Anderson", Address));
             _timeServiceMock = new Mock<ITimeService>();
+
+            productRepositoryMock = new Mock<IProductRepository>();
+            customerRepositoryMock = new Mock<ICustomerRepository>();
+
             var timeService = new TimeService();
             _timeServiceMock.Setup(timeService => timeService.GetLocalDateTime())
                 .Returns(timeService.ConvertToLocalDateTime(TimeConstants.Utc9am));
 
             _timeServiceMock.Setup(timeService => timeService.ConvertToLocalDateTime(It.IsAny<DateTime>()))
                 .Returns((DateTime datetime) => timeService.ConvertToLocalDateTime(datetime));
+
+            customerRepositoryMock
+                .Setup(service => service.GetById(1)).Returns(EntitiesCollection.Customer1);
+            productRepositoryMock
+                .Setup(service => service.GetProductByCode(EntitiesCollection.Product1.Code))
+                .Returns(EntitiesCollection.Product1);
+            productRepositoryMock
+                .Setup(service => service.GetProductByCode(EntitiesCollection.Product2.Code))
+                .Returns(EntitiesCollection.Product2);
+
         }
 
         [Test]
@@ -33,15 +46,17 @@ namespace Application.Test
 
 
             AddOrderCommand? addOrderCommand = new AddOrderCommand((
-               customer: Customer,
+               customerId: 1,
                address: Address,
-               items: new (IProduct product, int quantity)[]{
-                         (product:EntitiesCollection. Product1,quantity:15),
-                        (product: EntitiesCollection.Product2,quantity:10)
+               items: new (string productCode, int quantity)[]{
+                         (productCode:EntitiesCollection. Product1.Code,quantity:15),
+                        (productCode: EntitiesCollection.Product2.Code,quantity:10)
                    }
                ));
 
-            var addOrderCommandHandler = new AddOrderCommandHandler(_timeServiceMock.Object);
+            var addOrderCommandHandler = new AddOrderCommandHandler(_timeServiceMock.Object,
+                customerRepositoryMock.Object,
+                productRepositoryMock.Object);
 
             Assert.DoesNotThrowAsync(async () =>
             {
@@ -49,11 +64,11 @@ namespace Application.Test
             });
 
             AddOrderCommand? addOrderCommand2 = new AddOrderCommand((
-              customer: Customer,
+              customerId: 1,
               address: Address,
-              items: new (IProduct product, int quantity)[]{
-                         (product:EntitiesCollection. Product1,quantity:1),
-                        (product: EntitiesCollection.Product2,quantity:1)
+              items: new (string productCode, int quantity)[]{
+                         (productCode:EntitiesCollection. Product1.Code,quantity:1),
+                        (productCode: EntitiesCollection.Product2.Code,quantity:1)
                   }
               ));
 

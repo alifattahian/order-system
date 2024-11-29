@@ -1,7 +1,7 @@
 ﻿using Domain.Interfaces;
 using Domain.ValueObjects;
 
-namespace Domain;
+namespace Domain.Entities;
 
 public class Customer : ICustomer
 {

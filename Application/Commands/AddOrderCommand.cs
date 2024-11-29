@@ -1,10 +1,7 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Domain.ValueObjects;
+﻿using Application.Dto;
 using MediatR;
 
-namespace Application.Commands
-{
-    public record AddOrderCommand((ICustomer customer, Address address,
-            IEnumerable<(IProduct product, int quantity)> items) orderDto) : IRequest<int>;
-}
+namespace Application.Commands;
+
+public record AddOrderCommand((int customerId, AddressDto address,
+        IEnumerable<(string productCode, int quantity)> items) orderDto) : IRequest<int>;

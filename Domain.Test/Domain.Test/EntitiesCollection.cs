@@ -1,15 +1,19 @@
 ﻿using Domain.Entities;
+using Domain.ValueObjects;
 using Moq;
 
 namespace Domain.Test
 {
     public static class EntitiesCollection
     {
-        public static List<Product> Products { get; set; }
+        public static List<Product> Products { get; private set; }
         public static Product Product1 => Products.Where(x => x.Code == "AB-X1").FirstOrDefault();
         public static Product Product2 => Products.Where(x => x.Code == "SC-91").FirstOrDefault();
+        public static List<Customer> Customers { get; set; }
+        public static Customer Customer1 => Customers.FirstOrDefault();
+        public static List<ProductPrice> Prices { get; private set; }
+        public static Address Address => new Address("Tehran", "123456789", "my address location description");
 
-        public static List<ProductPrice> Prices { get; set; }
 
         static EntitiesCollection()
         {
@@ -19,6 +23,10 @@ namespace Domain.Test
             {
                 new Product((code:"AB-X1",name: "Flower Pot"),productDataServiceMoq.Object),
                 new Product((code:"SC-91",name: "Lamp"),productDataServiceMoq.Object)
+            });
+
+            Customers = new List<Customer>(new[] {
+                new Customer((name:"Anderson",address:Address))
             });
 
             productDataServiceMoq.Setup(service => service.GetPrice(Product1)).Returns(21000);
