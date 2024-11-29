@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Moq;
 
 namespace Domain.Test
 {
@@ -12,11 +13,16 @@ namespace Domain.Test
 
         static EntitiesCollection()
         {
+            var productDataServiceMoq = new Mock<IProductDataService>();
+
             Products = new List<Product>(new[]
             {
-                new Product((code:"AB-X1",name: "Flower Pot"),null),
-                new Product((code:"SC-91",name: "Lamp"),null)
+                new Product((code:"AB-X1",name: "Flower Pot"),productDataServiceMoq.Object),
+                new Product((code:"SC-91",name: "Lamp"),productDataServiceMoq.Object)
             });
+
+            productDataServiceMoq.Setup(service => service.GetPrice(Product1)).Returns(21000);
+            productDataServiceMoq.Setup(service => service.GetPrice(Product2)).Returns(5500);
 
 
             Prices = new List<ProductPrice>(new[]
