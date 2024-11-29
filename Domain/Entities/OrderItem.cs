@@ -1,6 +1,4 @@
-﻿using Domain.Interfaces;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class OrderItem
     {

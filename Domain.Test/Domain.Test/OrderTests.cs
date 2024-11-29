@@ -1,42 +1,36 @@
 using Domain.Constants;
 using Domain.Entities;
 using Domain.Exceptions;
-using Domain.Interfaces;
 using Domain.ValueObjects;
 
 namespace Domain.Test
 {
     public class OrderTests
     {
-        public List<Product> Products { get; set; }
 
-        protected Product Product1 => Products.Where(x => x.Code == "AB-X1").FirstOrDefault();
-        protected Product Product2 => Products.Where(x => x.Code == "SC-91").FirstOrDefault();
+
+
         protected Address Address => new Address("Tehran", "123456789", "my address location description");
         protected Customer Customer { set; get; }
         [SetUp]
         public void Setup()
         {
-            Products = new List<Product>(new[]
-            {
-                new Product((code:"AB-X1",name: "Flower Pot")),
-                new Product((code:"SC-91",name: "Lamp"))
-            });
-            Customer = new Customer();
+
+            Customer = new Customer((name: "Anderson", Address));
         }
 
         [Test]
         public void Test_CorrectOrder()
         {
-            Order order = null;
+            Order? order = null;
             Assert.DoesNotThrow(() =>
             {
                 order = new Order((
                    customer: Customer,
                    address: Address,
                    items: new (IProduct product, int quantity)[]{
-                         (product: Product1,quantity:15),
-                        (product: Product2,quantity:10)
+                         (product:EntitiesCollection. Product1,quantity:15),
+                        (product: EntitiesCollection.Product2,quantity:10)
                        }
                    ));
             }, "order should correctly be created!");
@@ -49,8 +43,8 @@ namespace Domain.Test
                 Assert.AreEqual(order, item.Order, "order in orderItem is not set!");
             }
 
-            Assert.IsTrue(order.Items.Any(item => item.Product == Product1 && item.Quantity == 15), "product or quantity is not set!");
-            Assert.IsTrue(order.Items.Any(item => item.Product == Product2 && item.Quantity == 10), "product or quantity is not set!");
+            Assert.IsTrue(order.Items.Any(item => item.Product == EntitiesCollection.Product1 && item.Quantity == 15), "product or quantity is not set!");
+            Assert.IsTrue(order.Items.Any(item => item.Product == EntitiesCollection.Product2 && item.Quantity == 10), "product or quantity is not set!");
         }
 
         [Test]
@@ -63,8 +57,8 @@ namespace Domain.Test
                    customer: null,
                    address: Address,
                    items: new (IProduct product, int quantity)[]{
-                         (product: Product1,quantity:15),
-                        (product: Product2,quantity:10)
+                         (product:EntitiesCollection. Product1,quantity:15),
+                        (product: EntitiesCollection.Product2,quantity:10)
                        }
                    ));
             }, "should throw an Exception when customer is not set!");
@@ -79,7 +73,7 @@ namespace Domain.Test
             var exception = Assert.Throws<DomainValidationException>(() =>
             {
                 order = new Order((
-                   customer: new Customer(),
+                   customer: Customer,
                    address: Address,
                    items: new (IProduct product, int quantity)[]{
 

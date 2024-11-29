@@ -4,7 +4,7 @@ namespace Domain.Exceptions
 {
     public class DomainValidationException : Exception
     {
-        public string Code { get; private set; }
+        public string? Code { get; private set; }
         public DomainValidationException(ErrorCode errorCode) : this(errorCode.Code, errorCode.Description)
         {
 
